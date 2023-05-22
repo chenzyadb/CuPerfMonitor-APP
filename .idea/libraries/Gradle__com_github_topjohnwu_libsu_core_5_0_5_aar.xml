@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.topjohnwu.libsu:core:5.0.5@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/ad81368ef6da0d2ef566baf8eefcf1ce/transformed/core-5.0.5/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ad81368ef6da0d2ef566baf8eefcf1ce/transformed/core-5.0.5/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/be8f9cd68b5c34171c3f97cf262639dc/transformed/core-5.0.5/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ad81368ef6da0d2ef566baf8eefcf1ce/transformed/core-5.0.5/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/ad81368ef6da0d2ef566baf8eefcf1ce/transformed/core-5.0.5/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.topjohnwu.libsu/core/5.0.5/9925a4b50970e91aa55e15e7ab4bb6e36301308f/core-5.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

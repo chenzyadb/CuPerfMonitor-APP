@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.jeziellago:compose-markdown:0.3.2@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e9eb37503aab1ee83c674f2866bf04d6/transformed/compose-markdown-0.3.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8b8faa9e01d05b4b432a201c0ca9e76b/transformed/compose-markdown-0.3.2/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/e9eb37503aab1ee83c674f2866bf04d6/transformed/compose-markdown-0.3.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e9eb37503aab1ee83c674f2866bf04d6/transformed/compose-markdown-0.3.2/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.jeziellago/compose-markdown/0.3.2/4b6dda4d149bf71c47f85966f7182a262c95d51e/compose-markdown-0.3.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

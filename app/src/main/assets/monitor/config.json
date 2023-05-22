@@ -1,0 +1,22 @@
+{
+    "reflashIntervalMs": 1000,
+    "saveIntervalMs": 5000,
+    "monitorItems": {
+        "timeMs": true,
+        "appPkgName": true,
+        "cpuCurFreq": true,
+        "cpuUsage": true,
+        "cpuTemp": true,
+        "gpuCurFreq": true,
+        "gpuUsage": true,
+        "ddrCurFreq": true,
+        "batteryPower": true,
+        "batteryTemp": true,
+        "batteryPercent": true,
+        "fps": true,
+        "jank": true,
+        "bigJank": true,
+        "maxFrameTime": true,
+        "ramFree": true
+    }
+}

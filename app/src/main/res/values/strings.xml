@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CuPerfMonitor</string>
+    <string name="title_activity_analysis">AnalysisActivity</string>
+</resources>

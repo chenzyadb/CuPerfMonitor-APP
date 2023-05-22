@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CuPerfMonitor.iml" filepath="$PROJECT_DIR$/.idea/modules/CuPerfMonitor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/CuPerfMonitor.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/CuPerfMonitor.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/CuPerfMonitor.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/CuPerfMonitor.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/CuPerfMonitor.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/CuPerfMonitor.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/CuPerfMonitor.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/CuPerfMonitor.app.unitTest.iml" />
+    </modules>
+  </component>
+</project>
