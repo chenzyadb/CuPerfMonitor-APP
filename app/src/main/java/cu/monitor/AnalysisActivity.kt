@@ -26,7 +26,15 @@ import cu.monitor.ui.theme.CuPerfMonitorTheme
 
 class AnalysisActivity : ComponentActivity() {
     private val utils = Utils()
+    private val dataColors = hashMapOf(
+        0 to Color(0xFF1F77B4),
+        1 to Color(0xFF2CA02C),
+        2 to Color(0xFFFF7F0E),
+        3 to Color(0xFFD62728),
+        4 to Color(0xFF9467BD)
+    )
 
+    private var appPkgName = ""
     private var timeMsList = listOf<Int>()
     private var cpuCurFreqList = listOf<List<Int>>()
     private var cpuUsageList = listOf<List<Int>>()
@@ -43,14 +51,6 @@ class AnalysisActivity : ComponentActivity() {
     private var maxFrameTimeList = listOf<Int>()
     private var ramFreeList = listOf<Int>()
 
-    private val dataColors = hashMapOf(
-        0 to Color(0xFF1F77B4),
-        1 to Color(0xFF2CA02C),
-        2 to Color(0xFFFF7F0E),
-        3 to Color(0xFFD62728),
-        4 to Color(0xFF9467BD)
-    )
-
     private val clusterToCpu = hashMapOf<Int, Int>()
     private val cpuToCluster = hashMapOf<Int, Int>()
     private var clusterNum = 0
@@ -59,6 +59,7 @@ class AnalysisActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        GetCpuInfo()
         val recordPath = intent.getStringExtra("recordPath")!!
         val recordText = utils.ReadFile(recordPath)
         val csv = utils.ParseCuCsv(recordText)
@@ -71,6 +72,7 @@ class AnalysisActivity : ComponentActivity() {
             Toast.makeText(applicationContext, "记录数量过少", Toast.LENGTH_LONG).show()
             finish()
         }
+        appPkgName = csv["appPkgName"]!![1];
 
         val timeMsDatas = csv["timeMs"]!!
         val cpuCurFreqDatas = csv["cpuCurFreq"]!!
@@ -134,8 +136,6 @@ class AnalysisActivity : ComponentActivity() {
         }
         cpuUsageList = cpuUsageMutableList.toList()
 
-        GetCpuInfo()
-
         setContent {
             CuPerfMonitorTheme {
                 Surface(
@@ -185,6 +185,7 @@ class AnalysisActivity : ComponentActivity() {
                                 .padding(top = 10.dp)
                                 .verticalScroll(rememberScrollState())
                         ) {
+                            AppPkgNameBar()
                             DataMetricsBar()
                             FpsChart()
                             JankChart()
@@ -209,6 +210,40 @@ class AnalysisActivity : ComponentActivity() {
         return configContext.resources.apply {
             configuration.fontScale = 1.0f
             displayMetrics.scaledDensity = displayMetrics.density * configuration.fontScale
+        }
+    }
+
+    @Composable
+    private fun AppPkgNameBar() {
+        Row(
+            modifier = Modifier
+                .padding(start = 5.dp, end = 5.dp)
+                .fillMaxWidth()
+                .height(40.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(10.dp)
+                ),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.mipmap.metrics),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 15.dp)
+                    .height(25.dp)
+                    .width(25.dp)
+            )
+            Text(
+                modifier = Modifier
+                    .padding(start = 10.dp),
+                text = appPkgName,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 1
+            )
         }
     }
 
@@ -257,7 +292,7 @@ class AnalysisActivity : ComponentActivity() {
 
         Column(
             modifier = Modifier
-                .padding(start = 5.dp, end = 5.dp)
+                .padding(start = 5.dp, end = 5.dp, top = 10.dp)
                 .fillMaxWidth()
                 .height(100.dp)
                 .background(
@@ -428,6 +463,7 @@ class AnalysisActivity : ComponentActivity() {
         }
         maxFps = maxFps / 10 * 10 + 10
         val maxTimeMs = timeMsList[timeMsList.lastIndex]
+
         Canvas(
             modifier = Modifier
                 .padding(start = 5.dp, end = 5.dp, top = 10.dp)
@@ -438,6 +474,8 @@ class AnalysisActivity : ComponentActivity() {
                     shape = RoundedCornerShape(10.dp)
                 )
         ) {
+
+
             drawLine(
                 color = Color.Black,
                 strokeWidth = 2f,
