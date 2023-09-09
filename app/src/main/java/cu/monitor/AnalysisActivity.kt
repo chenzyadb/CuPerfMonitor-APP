@@ -2,6 +2,7 @@ package cu.monitor
 
 import android.content.res.Resources
 import android.graphics.Paint
+import android.graphics.Path
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -18,6 +19,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -474,8 +476,6 @@ class AnalysisActivity : ComponentActivity() {
                     shape = RoundedCornerShape(10.dp)
                 )
         ) {
-
-
             drawLine(
                 color = Color.Black,
                 strokeWidth = 2f,
@@ -518,6 +518,7 @@ class AnalysisActivity : ComponentActivity() {
                 it.apply {
                     textSize = 20f
                     color = android.graphics.Color.GRAY
+                    isAntiAlias = true
                 }
             }
             drawContext.canvas.nativeCanvas.drawText(
@@ -530,6 +531,7 @@ class AnalysisActivity : ComponentActivity() {
                 it.apply {
                     textSize = 16f
                     color = android.graphics.Color.GRAY
+                    isAntiAlias = true
                 }
             }
             for (i in 0..5) {
@@ -555,18 +557,22 @@ class AnalysisActivity : ComponentActivity() {
                     tickPaint
                 )
             }
-            for (i in 1..fpsList.lastIndex) {
-                val startX = 50f + (size.width - 100f) * (i - 1) / fpsList.lastIndex
-                val startY = size.height - 50f - (size.height - 100f) * fpsList[i - 1] / maxFps
-                val endX = 50f + (size.width - 100f) * i / fpsList.lastIndex
-                val endY = size.height - 50f - (size.height - 100f) * fpsList[i] / maxFps
-                drawLine(
-                    color = dataColors[0]!!,
-                    strokeWidth = 2f,
-                    start = Offset(x = startX, y = startY),
-                    end = Offset(x = endX, y = endY)
-                )
+            val chartPaint = Paint().let {
+                it.apply {
+                    style = Paint.Style.STROKE
+                    strokeWidth = 2f
+                    color = dataColors[0]!!.toArgb()
+                    isAntiAlias = true
+                }
             }
+            val chartPath = Path()
+            chartPath.moveTo(50f, size.height - 50f - (size.height - 100f) * fpsList[0] / maxFps)
+            for (i in 1..fpsList.lastIndex) {
+                val x = 50f + (size.width - 100f) * i / fpsList.lastIndex
+                val y = size.height - 50f - (size.height - 100f) * fpsList[i] / maxFps
+                chartPath.lineTo(x, y)
+            }
+            drawContext.canvas.nativeCanvas.drawPath(chartPath, chartPaint)
         }
     }
 
@@ -644,6 +650,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 16f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 for (i in 0..5) {
@@ -784,6 +791,7 @@ class AnalysisActivity : ComponentActivity() {
                 it.apply {
                     textSize = 20f
                     color = android.graphics.Color.GRAY
+                    isAntiAlias = true
                 }
             }
             drawContext.canvas.nativeCanvas.drawText(
@@ -796,6 +804,7 @@ class AnalysisActivity : ComponentActivity() {
                 it.apply {
                     textSize = 16f
                     color = android.graphics.Color.GRAY
+                    isAntiAlias = true
                 }
             }
             for (i in 0..5) {
@@ -912,6 +921,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 20f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 drawContext.canvas.nativeCanvas.drawText(
@@ -924,6 +934,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 16f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 for (i in 0..5) {
@@ -950,20 +961,23 @@ class AnalysisActivity : ComponentActivity() {
                     )
                 }
                 for (cluster in 0 until clusterNum) {
-                    for (i in 1..cpuCurFreqList.lastIndex) {
-                        val startX = 50f + (size.width - 100f) * (i - 1) / cpuCurFreqList.lastIndex
-                        val startY =
-                            size.height - 50f - (size.height - 100f) * cpuCurFreqList[i - 1][clusterToCpu[cluster]!!] / maxCpuFreq
-                        val endX = 50f + (size.width - 100f) * i / cpuCurFreqList.lastIndex
-                        val endY =
-                            size.height - 50f - (size.height - 100f) * cpuCurFreqList[i][clusterToCpu[cluster]!!] / maxCpuFreq
-                        drawLine(
-                            color = dataColors[cluster]!!,
-                            strokeWidth = 2f,
-                            start = Offset(x = startX, y = startY),
-                            end = Offset(x = endX, y = endY)
-                        )
+                    val chartPaint = Paint().let {
+                        it.apply {
+                            style = Paint.Style.STROKE
+                            strokeWidth = 2f
+                            color = dataColors[cluster]!!.toArgb()
+                            isAntiAlias = true
+                        }
                     }
+                    val chartPath = Path()
+                    chartPath.moveTo(50f,
+                        size.height - 50f - (size.height - 100f) * cpuCurFreqList[0][clusterToCpu[cluster]!!] / maxCpuFreq)
+                    for (i in 1..cpuCurFreqList.lastIndex) {
+                        val x = 50f + (size.width - 100f) * i / cpuCurFreqList.lastIndex
+                        val y = size.height - 50f - (size.height - 100f) * cpuCurFreqList[i][clusterToCpu[cluster]!!] / maxCpuFreq
+                        chartPath.lineTo(x, y)
+                    }
+                    drawContext.canvas.nativeCanvas.drawPath(chartPath, chartPaint)
                 }
             }
             Row(
@@ -1049,6 +1063,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 20f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 drawContext.canvas.nativeCanvas.drawText(
@@ -1061,6 +1076,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 16f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 for (i in 0..5) {
@@ -1086,21 +1102,23 @@ class AnalysisActivity : ComponentActivity() {
                         tickPaint
                     )
                 }
-                for (i in 1..cpuUsageList.lastIndex) {
-                    for (cpu in 0..cpuUsageList[i].lastIndex) {
-                        val startX = 50f + (size.width - 100f) * (i - 1) / cpuUsageList.lastIndex
-                        val startY =
-                            size.height - 50f - (size.height - 100f) * cpuUsageList[i - 1][cpu] / 100
-                        val endX = 50f + (size.width - 100f) * i / cpuUsageList.lastIndex
-                        val endY =
-                            size.height - 50f - (size.height - 100f) * cpuUsageList[i][cpu] / 100
-                        drawLine(
-                            color = dataColors[cpuToCluster[cpu]]!!,
-                            strokeWidth = 2f,
-                            start = Offset(x = startX, y = startY),
-                            end = Offset(x = endX, y = endY)
-                        )
+                for (cpu in 0..cpuUsageList[0].lastIndex) {
+                    val chartPaint = Paint().let {
+                        it.apply {
+                            style = Paint.Style.STROKE
+                            strokeWidth = 2f
+                            color = dataColors[cpuToCluster[cpu]]!!.toArgb()
+                            isAntiAlias = true
+                        }
                     }
+                    val chartPath = Path()
+                    chartPath.moveTo(50f, size.height - 50f - (size.height - 100f) * cpuUsageList[0][cpu] / 100)
+                    for (i in 1..cpuUsageList.lastIndex) {
+                        val x = 50f + (size.width - 100f) * i / cpuUsageList.lastIndex
+                        val y = size.height - 50f - (size.height - 100f) * cpuUsageList[i][cpu] / 100
+                        chartPath.lineTo(x, y)
+                    }
+                    drawContext.canvas.nativeCanvas.drawPath(chartPath, chartPaint)
                 }
             }
             Row(
@@ -1194,6 +1212,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 20f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 drawContext.canvas.nativeCanvas.drawText(
@@ -1212,6 +1231,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 16f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 for (i in 0..5) {
@@ -1247,30 +1267,38 @@ class AnalysisActivity : ComponentActivity() {
                         tickPaint
                     )
                 }
-                for (i in 1..gpuCurFreqList.lastIndex) {
-                    val startX = 50f + (size.width - 100f) * (i - 1) / gpuCurFreqList.lastIndex
-                    val startY = size.height - 50f - (size.height - 100f) * gpuCurFreqList[i - 1] / maxGpuFreq
-                    val endX = 50f + (size.width - 100f) * i / gpuCurFreqList.lastIndex
-                    val endY = size.height - 50f - (size.height - 100f) * gpuCurFreqList[i] / maxGpuFreq
-                    drawLine(
-                        color = dataColors[0]!!,
-                        strokeWidth = 2f,
-                        start = Offset(x = startX, y = startY),
-                        end = Offset(x = endX, y = endY)
-                    )
+                val chartPaint = Paint().let {
+                    it.apply {
+                        style = Paint.Style.STROKE
+                        strokeWidth = 2f
+                        color = dataColors[0]!!.toArgb()
+                        isAntiAlias = true
+                    }
                 }
+                val chartPath = Path()
+                chartPath.moveTo(50f, size.height - 50f - (size.height - 100f) * gpuCurFreqList[0] / maxGpuFreq)
                 for (i in 1..gpuUsageList.lastIndex) {
-                    val startX = 50f + (size.width - 100f) * (i - 1) / gpuUsageList.lastIndex
-                    val startY = size.height - 50f - (size.height - 100f) * gpuUsageList[i - 1] / 100
-                    val endX = 50f + (size.width - 100f) * i / gpuUsageList.lastIndex
-                    val endY = size.height - 50f - (size.height - 100f) * gpuUsageList[i] / 100
-                    drawLine(
-                        color = dataColors[1]!!,
-                        strokeWidth = 2f,
-                        start = Offset(x = startX, y = startY),
-                        end = Offset(x = endX, y = endY)
-                    )
+                    val x = 50f + (size.width - 100f) * i / gpuCurFreqList.lastIndex
+                    val y = size.height - 50f - (size.height - 100f) * gpuCurFreqList[i] / maxGpuFreq
+                    chartPath.lineTo(x, y)
                 }
+                drawContext.canvas.nativeCanvas.drawPath(chartPath, chartPaint)
+                val chartPaint2 = Paint().let {
+                    it.apply {
+                        style = Paint.Style.STROKE
+                        strokeWidth = 2f
+                        color = dataColors[1]!!.toArgb()
+                        isAntiAlias = true
+                    }
+                }
+                val chartPath2 = Path()
+                chartPath2.moveTo(50f, size.height - 50f - (size.height - 100f) * gpuUsageList[0] / 100)
+                for (i in 1..gpuUsageList.lastIndex) {
+                    val x = 50f + (size.width - 100f) * i / gpuUsageList.lastIndex
+                    val y = size.height - 50f - (size.height - 100f) * gpuUsageList[i] / 100
+                    chartPath2.lineTo(x, y)
+                }
+                drawContext.canvas.nativeCanvas.drawPath(chartPath2, chartPaint2)
             }
             Row(
                 modifier = Modifier
@@ -1375,6 +1403,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 20f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 drawContext.canvas.nativeCanvas.drawText(
@@ -1393,6 +1422,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 16f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 for (i in 0..5) {
@@ -1428,30 +1458,38 @@ class AnalysisActivity : ComponentActivity() {
                         tickPaint
                     )
                 }
+                val chartPaint = Paint().let {
+                    it.apply {
+                        style = Paint.Style.STROKE
+                        strokeWidth = 2f
+                        color = dataColors[0]!!.toArgb()
+                        isAntiAlias = true
+                    }
+                }
+                val chartPath = Path()
+                chartPath.moveTo(50f, size.height - 50f - (size.height - 100f) * ramFreeList[0] / maxRamFree)
                 for (i in 1..ramFreeList.lastIndex) {
-                    val startX = 50f + (size.width - 100f) * (i - 1) / ramFreeList.lastIndex
-                    val startY = size.height - 50f - (size.height - 100f) * ramFreeList[i - 1] / maxRamFree
-                    val endX = 50f + (size.width - 100f) * i / ramFreeList.lastIndex
-                    val endY = size.height - 50f - (size.height - 100f) * ramFreeList[i] / maxRamFree
-                    drawLine(
-                        color = dataColors[0]!!,
-                        strokeWidth = 2f,
-                        start = Offset(x = startX, y = startY),
-                        end = Offset(x = endX, y = endY)
-                    )
+                    val x = 50f + (size.width - 100f) * i / ramFreeList.lastIndex
+                    val y = size.height - 50f - (size.height - 100f) * ramFreeList[i] / maxRamFree
+                    chartPath.lineTo(x, y)
                 }
+                drawContext.canvas.nativeCanvas.drawPath(chartPath, chartPaint)
+                val chartPaint2 = Paint().let {
+                    it.apply {
+                        style = Paint.Style.STROKE
+                        strokeWidth = 2f
+                        color = dataColors[1]!!.toArgb()
+                        isAntiAlias = true
+                    }
+                }
+                val chartPath2 = Path()
+                chartPath2.moveTo(50f, size.height - 50f - (size.height - 100f) * ddrCurFreqList[0] / maxDdrFreq)
                 for (i in 1..ddrCurFreqList.lastIndex) {
-                    val startX = 50f + (size.width - 100f) * (i - 1) / ddrCurFreqList.lastIndex
-                    val startY = size.height - 50f - (size.height - 100f) * ddrCurFreqList[i - 1] / maxDdrFreq
-                    val endX = 50f + (size.width - 100f) * i / ddrCurFreqList.lastIndex
-                    val endY = size.height - 50f - (size.height - 100f) * ddrCurFreqList[i] / maxDdrFreq
-                    drawLine(
-                        color = dataColors[1]!!,
-                        strokeWidth = 2f,
-                        start = Offset(x = startX, y = startY),
-                        end = Offset(x = endX, y = endY)
-                    )
+                    val x = 50f + (size.width - 100f) * i / ddrCurFreqList.lastIndex
+                    val y = size.height - 50f - (size.height - 100f) * ddrCurFreqList[i] / maxDdrFreq
+                    chartPath2.lineTo(x, y)
                 }
+                drawContext.canvas.nativeCanvas.drawPath(chartPath2, chartPaint2)
             }
             Row(
                 modifier = Modifier
@@ -1554,6 +1592,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 20f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 drawContext.canvas.nativeCanvas.drawText(
@@ -1566,6 +1605,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 16f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 for (i in 0..5) {
@@ -1591,30 +1631,38 @@ class AnalysisActivity : ComponentActivity() {
                         tickPaint
                     )
                 }
+                val chartPaint = Paint().let {
+                    it.apply {
+                        style = Paint.Style.STROKE
+                        strokeWidth = 2f
+                        color = dataColors[0]!!.toArgb()
+                        isAntiAlias = true
+                    }
+                }
+                val chartPath = Path()
+                chartPath.moveTo(50f, size.height - 50f - (size.height - 100f) * batteryTempList[0] / maxTemp)
                 for (i in 1..batteryTempList.lastIndex) {
-                    val startX = 50f + (size.width - 100f) * (i - 1) / batteryTempList.lastIndex
-                    val startY = size.height - 50f - (size.height - 100f) * batteryTempList[i - 1] / maxTemp
-                    val endX = 50f + (size.width - 100f) * i / batteryTempList.lastIndex
-                    val endY = size.height - 50f - (size.height - 100f) * batteryTempList[i] / maxTemp
-                    drawLine(
-                        color = dataColors[0]!!,
-                        strokeWidth = 2f,
-                        start = Offset(x = startX, y = startY),
-                        end = Offset(x = endX, y = endY)
-                    )
+                    val x = 50f + (size.width - 100f) * i / batteryTempList.lastIndex
+                    val y = size.height - 50f - (size.height - 100f) * batteryTempList[i] / maxTemp
+                    chartPath.lineTo(x, y)
                 }
+                drawContext.canvas.nativeCanvas.drawPath(chartPath, chartPaint)
+                val chartPaint2 = Paint().let {
+                    it.apply {
+                        style = Paint.Style.STROKE
+                        strokeWidth = 2f
+                        color = dataColors[1]!!.toArgb()
+                        isAntiAlias = true
+                    }
+                }
+                val chartPath2 = Path()
+                chartPath2.moveTo(50f, size.height - 50f - (size.height - 100f) * cpuTempList[0] / maxTemp)
                 for (i in 1..cpuTempList.lastIndex) {
-                    val startX = 50f + (size.width - 100f) * (i - 1) / cpuTempList.lastIndex
-                    val startY = size.height - 50f - (size.height - 100f) * cpuTempList[i - 1] / maxTemp
-                    val endX = 50f + (size.width - 100f) * i / cpuTempList.lastIndex
-                    val endY = size.height - 50f - (size.height - 100f) * cpuTempList[i] / maxTemp
-                    drawLine(
-                        color = dataColors[1]!!,
-                        strokeWidth = 2f,
-                        start = Offset(x = startX, y = startY),
-                        end = Offset(x = endX, y = endY)
-                    )
+                    val x = 50f + (size.width - 100f) * i / cpuTempList.lastIndex
+                    val y = size.height - 50f - (size.height - 100f) * cpuTempList[i] / maxTemp
+                    chartPath2.lineTo(x, y)
                 }
+                drawContext.canvas.nativeCanvas.drawPath(chartPath2, chartPaint2)
             }
             Row(
                 modifier = Modifier
@@ -1713,6 +1761,7 @@ class AnalysisActivity : ComponentActivity() {
                     it.apply {
                         textSize = 20f
                         color = android.graphics.Color.GRAY
+                        isAntiAlias = true
                     }
                 }
                 drawContext.canvas.nativeCanvas.drawText(
@@ -1766,30 +1815,38 @@ class AnalysisActivity : ComponentActivity() {
                         tickPaint
                     )
                 }
+                val chartPaint = Paint().let {
+                    it.apply {
+                        style = Paint.Style.STROKE
+                        strokeWidth = 2f
+                        color = dataColors[0]!!.toArgb()
+                        isAntiAlias = true
+                    }
+                }
+                val chartPath = Path()
+                chartPath.moveTo(50f, size.height - 50f - (size.height - 100f) * batteryPercentList[0] / 100)
                 for (i in 1..batteryPercentList.lastIndex) {
-                    val startX = 50f + (size.width - 100f) * (i - 1) / batteryPercentList.lastIndex
-                    val startY = size.height - 50f - (size.height - 100f) * batteryPercentList[i - 1] / 100
-                    val endX = 50f + (size.width - 100f) * i / batteryPercentList.lastIndex
-                    val endY = size.height - 50f - (size.height - 100f) * batteryPercentList[i] / 100
-                    drawLine(
-                        color = dataColors[0]!!,
-                        strokeWidth = 2f,
-                        start = Offset(x = startX, y = startY),
-                        end = Offset(x = endX, y = endY)
-                    )
+                    val x = 50f + (size.width - 100f) * i / batteryPercentList.lastIndex
+                    val y = size.height - 50f - (size.height - 100f) * batteryPercentList[i] / 100
+                    chartPath.lineTo(x, y)
                 }
+                drawContext.canvas.nativeCanvas.drawPath(chartPath, chartPaint)
+                val chartPaint2 = Paint().let {
+                    it.apply {
+                        style = Paint.Style.STROKE
+                        strokeWidth = 2f
+                        color = dataColors[1]!!.toArgb()
+                        isAntiAlias = true
+                    }
+                }
+                val chartPath2 = Path()
+                chartPath2.moveTo(50f, size.height - 50f - (size.height - 100f) * batteryPowerList[0] / maxPower)
                 for (i in 1..batteryPowerList.lastIndex) {
-                    val startX = 50f + (size.width - 100f) * (i - 1) / batteryPowerList.lastIndex
-                    val startY = size.height - 50f - (size.height - 100f) * batteryPowerList[i - 1] / maxPower
-                    val endX = 50f + (size.width - 100f) * i / batteryPowerList.lastIndex
-                    val endY = size.height - 50f - (size.height - 100f) * batteryPowerList[i] / maxPower
-                    drawLine(
-                        color = dataColors[1]!!,
-                        strokeWidth = 2f,
-                        start = Offset(x = startX, y = startY),
-                        end = Offset(x = endX, y = endY)
-                    )
+                    val x = 50f + (size.width - 100f) * i / batteryPowerList.lastIndex
+                    val y = size.height - 50f - (size.height - 100f) * batteryPowerList[i] / maxPower
+                    chartPath2.lineTo(x, y)
                 }
+                drawContext.canvas.nativeCanvas.drawPath(chartPath2, chartPaint2)
             }
             Row(
                 modifier = Modifier
